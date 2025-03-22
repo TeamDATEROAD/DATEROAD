@@ -38,3 +38,15 @@ next-env.d.ts
 
 # DATEROAD SERVER
 /DATEROAD-SERVER/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+logs
+*.log
+
+# System Files
+.DS_Store
+Thumbs.db
