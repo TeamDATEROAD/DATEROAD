@@ -190,7 +190,7 @@ export default function CoursesPage() {
           courses.map((course) => (
             <div
               key={safeGetCourseField(course, "id", course.course_id || Math.random().toString())}
-              className="bg-white rounded-lg shadow p-4 flex items-center gap-4 hover:bg-purple-50 transition-colors cursor-pointer"
+              className="bg-white rounded-lg shadow p-4 grid grid-cols-[64px,1fr,auto] md:flex md:items-center gap-4 hover:bg-purple-50 transition-colors cursor-pointer"
               onClick={() => setSelectedCourse(course)}
             >
               <div className="w-16 h-16 relative rounded overflow-hidden bg-gray-100 flex-shrink-0">
@@ -214,17 +214,19 @@ export default function CoursesPage() {
                   </div>
                 )}
               </div>
-              <div className="flex-grow">
-                <h3 className="text-lg font-medium text-gray-800">
+              <div className="flex-grow min-w-0">
+                <h3 className="text-base md:text-lg font-medium text-gray-800 whitespace-normal break-words">
                   {safeGetCourseField(course, "title")}
                 </h3>
-                <p className="text-sm text-gray-600">
-                  작성자: {safeGetCourseField(course, "user.name")} | 생성일:{" "}
-                  {formatDate(safeGetCourseField(course, "createdAt"))} | 비용:{" "}
-                  {safeGetCourseField(course, "cost", 0)}원
-                </p>
+                <div className="text-xs md:text-sm text-gray-600 flex flex-wrap gap-x-2 gap-y-1 items-center">
+                  <span>작성자: {safeGetCourseField(course, "user.name")}</span>
+                  <span className="hidden md:inline-block">|</span>
+                  <span>생성일: {formatDate(safeGetCourseField(course, "createdAt"))}</span>
+                  <span className="hidden md:inline-block">|</span>
+                  <span>비용: {safeGetCourseField(course, "cost", 0)}원</span>
+                </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 col-span-3 md:col-span-1 mt-3 md:mt-0">
                 <Button
                   variant="outline"
                   size="sm"
