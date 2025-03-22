@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { config } from "@/lib/config";
+import { Input } from "@/components/ui/input";
 
 interface Course {
   id?: string;
@@ -95,20 +96,30 @@ export default function AdminDashboard() {
   }, [currentPage, pageSize, searchQuery]);
 
   return (
-    <div className="p-4">
-      <div className="space-y-4">
+    <div className="p-2 sm:p-4 pt-20 lg:pt-4 max-w-7xl mx-auto">
+      {/* 검색 바 */}
+      <div className="mb-4 sticky top-16 lg:top-0 bg-white z-10 p-2 sm:p-4 border-b lg:border rounded-lg shadow-sm">
+        <Input
+          type="search"
+          placeholder="코스 검색..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="max-w-md w-full"
+        />
+      </div>
+
+      <div className="space-y-3 sm:space-y-4">
         {courses.map((course: Course) => (
           <div
             key={safeGetCourseField(course, "id", course.course_id || Math.random().toString())}
-            className="p-4 flex items-center gap-4 hover:bg-purple-50 transition-colors"
+            className="p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 hover:bg-purple-50 transition-colors rounded-lg border border-gray-200 bg-white shadow-sm"
           >
-            <div className="w-16 h-16 relative rounded overflow-hidden bg-gray-100 flex-shrink-0">
+            <div className="w-full sm:w-20 h-32 sm:h-20 relative rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
               {safeGetCourseField(course, "thumbnail") ? (
                 <Image
                   src={safeGetCourseField(course, "thumbnail")}
                   alt={safeGetCourseField(course, "title")}
-                  width={64}
-                  height={64}
+                  fill
                   className="object-cover"
                 />
               ) : (
@@ -117,23 +128,36 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
-            <div className="flex-grow">
-              <h3 className="text-lg font-medium text-gray-800">{safeGetCourseField(course, "title")}</h3>
-              <p className="text-sm text-gray-600">
-                작성자: {safeGetCourseField(course, "user.name")} | 생성일:{" "}
-                {formatDate(safeGetCourseField(course, "createdAt"))} | 비용:{" "}
-                {safeGetCourseField(course, "cost", 0)}원
-              </p>
+            <div className="flex-grow min-w-0 space-y-2">
+              <h3 className="text-base sm:text-lg font-medium text-gray-800 break-all line-clamp-2">
+                {safeGetCourseField(course, "title")}
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs sm:text-sm text-gray-600">
+                <p className="flex items-center gap-2">
+                  <span className="text-gray-500">작성자:</span>
+                  <span className="font-medium">{safeGetCourseField(course, "user.name")}</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <span className="text-gray-500">생성일:</span>
+                  <span className="font-medium">{formatDate(safeGetCourseField(course, "createdAt"))}</span>
+                </p>
+                <p className="flex items-center gap-2 col-span-2 sm:col-span-1">
+                  <span className="text-gray-500">비용:</span>
+                  <span className="font-medium">{safeGetCourseField(course, "cost", 0).toLocaleString()}원</span>
+                </p>
+              </div>
             </div>
-            <Button
-              variant="destructive"
-              size="sm"
-              className="bg-red-100 hover:bg-red-200 text-red-700"
-              onClick={() => confirmDelete(safeGetCourseField(course, "id", course.course_id))}
-            >
-              <Trash2 className="h-4 w-4 mr-1" />
-              삭제
-            </Button>
+            <div className="w-full sm:w-auto flex justify-end">
+              <Button
+                variant="destructive"
+                size="sm"
+                className="w-full sm:w-auto bg-red-100 hover:bg-red-200 text-red-700 text-xs sm:text-sm h-9 sm:h-10 px-4"
+                onClick={() => confirmDelete(safeGetCourseField(course, "id", course.course_id))}
+              >
+                <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5" />
+                삭제
+              </Button>
+            </div>
           </div>
         ))}
       </div>

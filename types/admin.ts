@@ -1,30 +1,23 @@
 export interface AdminUserResponse {
   id: number;
-  email: string;
   name: string;
-  nickname: string;
+  platformUserId: string;
+  platForm: string;
+  imageUrl: string | null;
   profileImage: string | null;
-  status: 'ACTIVE' | 'BANNED';
-  warningCount: number;
+  status: string;
+  free: number;
+  totalPoint: number;
   createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
+  lastModifiedAt: string;
 }
 
 export interface CourseResponse {
-  id: number;
+  id: string;
   title: string;
-  description: string;
-  thumbnail: string | null;
   country: string;
   city: string;
-  cost: number;
-  time: string;
   date: string;
-  startAt: string;
-  userId: number;
-  userName: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
+  time: string;
+  cost: number;
 } 

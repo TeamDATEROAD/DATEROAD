@@ -17,6 +17,7 @@ export default function UserDetailModal({ userId, isOpen, onClose }: UserDetailM
   const [courses, setCourses] = useState<CourseResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (!isOpen || !userId) return;
@@ -29,6 +30,7 @@ export default function UserDetailModal({ userId, isOpen, onClose }: UserDetailM
           getUserDetail(userId),
           getUserCourses(userId)
         ]);
+        console.log('User detail:', userDetail);
         setUser(userDetail);
         setCourses(userCourses);
       } catch (err) {
@@ -40,6 +42,28 @@ export default function UserDetailModal({ userId, isOpen, onClose }: UserDetailM
 
     fetchData();
   }, [userId, isOpen]);
+
+  const handleImageError = () => {
+    console.log('Image load error occurred');
+    setImageError(true);
+  };
+
+  const getImageUrl = (imageUrl: string | null) => {
+    console.log('Original image URL:', imageUrl);
+    if (!imageUrl) return '/default-avatar.png';
+    if (imageUrl.toLowerCase().endsWith('.heic')) return '/default-avatar.png';
+    
+    // URL이 이미 https://로 시작하는 경우 그대로 반환
+    if (imageUrl.startsWith('https://')) return imageUrl;
+    
+    // 상대 경로인 경우 Cloudfront URL 추가
+    if (imageUrl.startsWith('/')) {
+      return `https://d3d876o2grsba0.cloudfront.net${imageUrl}`;
+    }
+    
+    // 그 외의 경우 Cloudfront URL에 추가
+    return `https://d3d876o2grsba0.cloudfront.net/${imageUrl}`;
+  };
 
   if (!isOpen) return null;
 
@@ -65,23 +89,26 @@ export default function UserDetailModal({ userId, isOpen, onClose }: UserDetailM
         ) : user ? (
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
-              <Image
-                src={user.profileImage || '/default-avatar.png'}
-                alt={user.name}
-                width={64}
-                height={64}
-                className="rounded-full"
-              />
+              <div className="relative w-16 h-16 bg-gray-100 rounded-full overflow-hidden">
+                <Image
+                  src={imageError ? '/default-avatar.png' : getImageUrl(user.imageUrl)}
+                  alt={user.name}
+                  width={64}
+                  height={64}
+                  className="object-cover w-full h-full"
+                  onError={handleImageError}
+                />
+              </div>
               <div>
                 <h3 className="text-xl font-semibold">{user.name}</h3>
-                <p className="text-gray-600">{user.email}</p>
+                <p className="text-gray-600">{user.platformUserId}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-600">닉네임</p>
-                <p className="font-medium">{user.nickname}</p>
+                <p className="text-gray-600">플랫폼</p>
+                <p className="font-medium">{user.platForm}</p>
               </div>
               <div>
                 <p className="text-gray-600">상태</p>
@@ -90,12 +117,16 @@ export default function UserDetailModal({ userId, isOpen, onClose }: UserDetailM
                 </p>
               </div>
               <div>
-                <p className="text-gray-600">경고 횟수</p>
-                <p className="font-medium">{user.warningCount}</p>
+                <p className="text-gray-600">무료 이용권</p>
+                <p className="font-medium">{user.free || 0}회</p>
               </div>
               <div>
                 <p className="text-gray-600">가입일</p>
                 <p className="font-medium">{formatDate(user.createdAt)}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">포인트</p>
+                <p className="font-medium">{user.totalPoint || 0}P</p>
               </div>
             </div>
 

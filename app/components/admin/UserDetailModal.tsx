@@ -72,26 +72,14 @@ export default function UserDetailModal({ userId, isOpen, onClose }: UserDetailM
                 height={64}
                 className="rounded-full"
               />
-              <div>
-                <h3 className="text-xl font-semibold">{user.name}</h3>
-                <p className="text-gray-600">{user.email}</p>
-              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-gray-600">닉네임</p>
-                <p className="font-medium">{user.nickname}</p>
-              </div>
               <div>
                 <p className="text-gray-600">상태</p>
                 <p className={`font-medium ${user.status === 'BANNED' ? 'text-red-500' : 'text-green-500'}`}>
                   {user.status === 'BANNED' ? '정지됨' : '활성'}
                 </p>
-              </div>
-              <div>
-                <p className="text-gray-600">경고 횟수</p>
-                <p className="font-medium">{user.warningCount}</p>
               </div>
               <div>
                 <p className="text-gray-600">가입일</p>

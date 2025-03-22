@@ -113,28 +113,34 @@ export default function CoursesPage() {
 
   const confirmDelete = async (courseId: string) => {
     if (!window.confirm("정말로 이 코스를 삭제하시겠습니까?")) {
-      return
+      return;
     }
 
     try {
+      console.log('Deleting course:', courseId);
       const response = await fetch(`/api/courses/${courseId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          "Content-Type": "application/json",
         },
-      })
+      });
+
+      console.log('Delete response:', response.status);
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "코스 삭제에 실패했습니다.")
+        const errorData = await response.json();
+        console.error('Delete error:', errorData);
+        throw new Error(errorData.message || "코스 삭제에 실패했습니다.");
       }
 
-      await loadCourses()
+      alert("코스가 성공적으로 삭제되었습니다.");
+      await loadCourses();
     } catch (error) {
-      console.error("Error deleting course:", error)
-      setError(error instanceof Error ? error.message : "코스 삭제에 실패했습니다.")
+      console.error("Error deleting course:", error);
+      alert(error instanceof Error ? error.message : "코스 삭제에 실패했습니다.");
     }
-  }
+  };
 
   const viewUserDetails = (userId: string) => {
     router.push(`/admin/users/${userId}`)

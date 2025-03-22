@@ -13,7 +13,19 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
-import config from "@/lib/config"
+import { config } from "@/lib/config"
+
+interface Course {
+  id: string | number;
+  course_id?: string;
+  title: string;
+  thumbnail?: string;
+  createdAt: string;
+  cost: number;
+  user: {
+    name: string;
+  };
+}
 
 // Mock data for testing when API is not available
 const mockCourses = [
@@ -55,13 +67,13 @@ const mockCourses = [
 ]
 
 export default function AdminDashboard() {
-  const [courses, setCourses] = useState([])
+  const [courses, setCourses] = useState<Course[]>([])
   const [currentPage, setCurrentPage] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [courseToDelete, setCourseToDelete] = useState(null)
+  const [courseToDelete, setCourseToDelete] = useState<string | number | null>(null)
   const [adminName, setAdminName] = useState("")
   const [error, setError] = useState("")
   const [useMockData, setUseMockData] = useState(false)
@@ -165,7 +177,7 @@ export default function AdminDashboard() {
     }
   }
 
-  async function deleteCourse(courseId) {
+  async function deleteCourse(courseId: string | number) {
     if (useMockData) {
       // Simulate deletion with mock data
       setCourses(courses.filter((course) => course.id !== courseId))
@@ -200,7 +212,7 @@ export default function AdminDashboard() {
     }
   }
 
-  function confirmDelete(courseId) {
+  function confirmDelete(courseId: string | number) {
     setCourseToDelete(courseId)
     setShowDeleteModal(true)
   }
@@ -213,11 +225,11 @@ export default function AdminDashboard() {
     }
   }
 
-  function changePage(page) {
+  function changePage(page: number) {
     setCurrentPage(page)
   }
 
-  function handleSearch(e) {
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchQuery(e.target.value)
     setCurrentPage(0)
 
@@ -229,18 +241,17 @@ export default function AdminDashboard() {
     return () => clearTimeout(timeoutId)
   }
 
-  function formatDate(dateString) {
+  function formatDate(dateString: string) {
     try {
       const date = new Date(dateString)
       return date.toLocaleDateString("ko-KR", {
         year: "numeric",
         month: "long",
         day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
       })
-    } catch (e) {
-      return dateString || "날짜 정보 없음"
+    } catch (error) {
+      console.error("Error formatting date:", error)
+      return "날짜 정보 없음"
     }
   }
 
@@ -256,27 +267,16 @@ export default function AdminDashboard() {
   }
 
   // 코스 데이터 필드 안전하게 접근
-  function safeGetCourseField(course, field, defaultValue = "정보 없음") {
-    try {
-      if (!course) return defaultValue
-
-      if (field.includes(".")) {
-        const parts = field.split(".")
-        let value = course
-
-        for (const part of parts) {
-          if (value === null || value === undefined) return defaultValue
-          value = value[part]
-        }
-
-        return value !== null && value !== undefined ? value : defaultValue
-      }
-
-      return course[field] !== null && course[field] !== undefined ? course[field] : defaultValue
-    } catch (e) {
-      console.error(`Error accessing field ${field}:`, e)
-      return defaultValue
+  function safeGetCourseField(course: Course, field: string, defaultValue: any = "") {
+    const fields = field.split(".");
+    let value: any = course;
+    
+    for (const f of fields) {
+      value = value?.[f];
+      if (value === undefined) return defaultValue;
     }
+    
+    return value;
   }
 
   // 관리자 대시보드의 배경과 컴포넌트 스타일을 밝은 테마로 변경
