@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import config from '@/lib/config';
+import { config } from '@/lib/config';
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const authHeader = request.headers.get('Authorization');
@@ -11,11 +11,8 @@ export async function GET(
       return NextResponse.json({ message: '인증이 필요합니다.' }, { status: 401 });
     }
 
-    // 동적 라우트 파라미터를 비동기적으로 처리
-    const id = await Promise.resolve(context.params.id);
-
     const response = await fetch(
-      `${config.apiBaseUrl}${config.endpoints.userCourses(id)}`,
+      `${config.apiBaseUrl}${config.endpoints.userCourses(params.id)}`,
       {
         headers: {
           Authorization: authHeader,

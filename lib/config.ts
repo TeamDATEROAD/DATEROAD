@@ -1,5 +1,5 @@
 // API URL 설정
-const config = {
+export const config = {
   // API 기본 URL
   apiBaseUrl: process.env.NEXT_PUBLIC_API_URL || 'https://api.dateroad-main.p-e.kr',
   
@@ -21,6 +21,4 @@ const config = {
   getApiUrl: function(endpoint: string) {
     return this.apiBaseUrl + endpoint;
   }
-};
-
-export default config; 
+}; 
